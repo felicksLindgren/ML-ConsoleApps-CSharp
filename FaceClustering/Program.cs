@@ -6,16 +6,19 @@ namespace FaceClustering
 {
     class Program
     {
-        const string inputFilePath = "./images/group.jpg";
+        const string Image = "./images/18871730-0-image-a-28_1569333047536.jpg";
+        const string Output = "images/output.jpg";
+        const string PredictorPath = "shape_predictor_5_face_landmarks.dat";
+        const string ModelPath = "dlib_face_recognition_resnet_model_v1.dat";
 
         static void Main(string[] args)
         {
             Console.WriteLine("Loading detectors...");
             
             using(var detector = Dlib.GetFrontalFaceDetector())
-            using(var predictor = ShapePredictor.Deserialize("shape_predictor_5_face_landmarks.dat"))
-            using(var dnn = DlibDotNet.Dnn.LossMetric.Deserialize("dlib_face_recognition_resnet_model_v1.dat"))
-            using(var img = Dlib.LoadImage<RgbPixel>(inputFilePath)) {
+            using(var predictor = ShapePredictor.Deserialize(PredictorPath))
+            using(var dnn = DlibDotNet.Dnn.LossMetric.Deserialize(ModelPath))
+            using(var img = Dlib.LoadImage<RgbPixel>(Image)) {
                 var chips = new List<Matrix<RgbPixel>>();
                 var faces = new List<Rectangle>();
 
@@ -56,14 +59,13 @@ namespace FaceClustering
                     new RgbPixel(0x43, 0x63, 0xd8),
                     new RgbPixel(0x91, 0x1e, 0xb4),
                     new RgbPixel(0xf0, 0x32, 0xe6),
-                    new RgbPixel(0x80, 0x80, 0x80)
+                    new RgbPixel(0x80, 0x80, 0x80),
                 };
-
-                for (var i = 0; i < faces.Count; i++) {
+                
+                for (var i = 0; i < faces.Count; i++) 
                     Dlib.DrawRectangle(img, faces[i], color: palette[labels[i]], thickness: 4);
-                }
 
-                Dlib.SaveJpeg(img, "images/output.jpg");
+                Dlib.SaveJpeg(img, Output);
             }
         }
     }
